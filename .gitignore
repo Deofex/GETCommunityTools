@@ -1,0 +1,6 @@
+\env
+.env
+prod.env
+\.vscode
+__pycache__
+**nft.db

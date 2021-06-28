@@ -1,0 +1,43 @@
+version: '3.4'
+
+services:
+    EventsImporter:
+        image: deofex/getnftbot:eventsimporter
+        build:
+            context: ./EventsImporter
+            dockerfile: Dockerfile
+        volumes:
+            - getnftbot_v1:/app/nftdb
+        env_file:
+            - dev.env
+    NFTImporter:
+        image: deofex/getnftbot:nftimporter
+        build:
+            context: ./NFTImporter
+            dockerfile: Dockerfile
+        volumes:
+            - getnftbot_v1:/app/nftdb
+        env_file:
+            - dev.env
+    TelegramInput:
+        image: deofex/getnftbot:telegraminput
+        build:
+            context: ./TelegramInput
+            dockerfile: Dockerfile
+        volumes:
+            - getnftbot_v1:/app/nftdb
+        env_file:
+            - dev.env
+    Reporter:
+        image: deofex/getnftbot:reporter
+        build:
+            context: ./Reporter
+            dockerfile: Dockerfile
+        volumes:
+            - getnftbot_v1:/app/nftdb
+        env_file:
+            - dev.env
+volumes:
+    getnftbot_v1:
+        external: true
+

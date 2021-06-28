@@ -1,0 +1,1 @@
+from .neweventregistered import neweventregistered
