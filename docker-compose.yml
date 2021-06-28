@@ -37,7 +37,7 @@ services:
             - getnftbot_v1:/app/nftdb
         env_file:
             - dev.env
-            UpcomingEvents:
+    UpcomingEvents:
         image: deofex/getnftbot:upcomingevents
         build:
             context: ./UpcomingEvents
