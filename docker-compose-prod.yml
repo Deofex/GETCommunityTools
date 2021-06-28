@@ -25,6 +25,12 @@ services:
             - getnftbot_v1:/app/nftdb
         env_file:
             - prod.env
+    UpcomingEvents:
+        image: deofex/getnftbot:upcomingevents
+        volumes:
+            - getnftbot_v1:/app/nftdb
+        env_file:
+            - prod.env
 volumes:
     getnftbot_v1:
         external: true
