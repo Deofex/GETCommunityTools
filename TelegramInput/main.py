@@ -7,8 +7,8 @@ from telegram.telegram import TelegramBot
 
 # Log level 1 is INFO, Log level 2 is Debug
 loglevel = int(os.environ.get('loglevel'))
-# Name of the database to write the trades and liquidity information to
-databasename = os.environ.get('databasename')
+# Database password
+dbpassword = os.environ.get('POSTGRES_PASSWORD')
 # Telegram API Token
 telegramapitoken = os.environ.get('telegramapitoken')
 
@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 logger.info('Start Telegram input processor')
 
 #Initialize Database
-db = Database(databasename)
+db = Database(dbpassword)
 
 # Initialize bot
 tgbot = TelegramBot(telegramapitoken)
@@ -62,6 +62,8 @@ while True:
             if not db.check_telegramidexist(id):
                 logger.info("Add telegram ID {} in the database".format(id))
                 db.add_telegramid(id, username)
+            else :
+                logger.info("Telegram ID {} already in the database".format(id))
     time.sleep(1)
 
 
