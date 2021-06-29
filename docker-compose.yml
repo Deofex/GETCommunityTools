@@ -46,7 +46,15 @@ services:
             - getnftbot_v1:/app/nftdb
         env_file:
             - dev.env
+    db:
+        image: postgres
+        volumes:
+            - getnftbot_v2:/var/lib/postgresql/data
+        env_file:
+            - dev.env
 volumes:
     getnftbot_v1:
+        external: true
+    getnftbot_v2:
         external: true
 
