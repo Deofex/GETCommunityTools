@@ -1,14 +1,14 @@
 import sys
 import os
 import logging
-from datetime import datetime
+from datetime import datetime, time, timedelta
 from db.db import Database
 from telegram.telegram import TelegramBot
 
 # Log level 1 is INFO, Log level 2 is Debug
 loglevel = int(os.environ.get('loglevel'))
-# Name of the database to write the trades and liquidity information to
-databasename = os.environ.get('databasename')
+# Database password
+dbpassword = os.environ.get('POSTGRES_PASSWORD')
 # Telegram API Token
 telegramapitoken = os.environ.get('telegramapitoken')
 
@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 logger.info('Start Reporter processor')
 
 # Initialize Database
-db = Database(databasename)
+db = Database(dbpassword)
 
 # Initialize bot
 tg = TelegramBot(telegramapitoken,db)
@@ -78,10 +78,10 @@ def createrapport(reportdate, psalesummery, ssalesummery, tscanned):
 def getdayreport():
     # Calculate starttime (st) and endtime (et) in epoch format
     ct = datetime.now()
-    st = datetime(ct.year, ct.month, (ct.day - 1)).timestamp()
+    reportdate = datetime(ct.year, ct.month, ct.day) - timedelta(1)
+    st = reportdate.timestamp()
     et = datetime(ct.year, ct.month, ct.day).timestamp()
-    # Add the report date to a variabele
-    reportdate = datetime(ct.year, ct.month, (ct.day - 1))
+
     logger.info('Creating report for: {}'.format(reportdate))
     # Gather the primary sale summery from the database
     psalesummery = db.get_psalesummery(st, et)

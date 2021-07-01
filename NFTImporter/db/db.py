@@ -1,25 +1,26 @@
 import logging
-import sqlite3
-from sqlite3 import Error
+import psycopg2
 
 # Configure logging
 logger = logging.getLogger(__name__)
 
 
 class Database():
-    def __init__(self, db_file):
+    def __init__(
+        self, dbpassword, dbuser='nftdbuser', dbname='nftdb',host= 'db'):
         logger.info('Start new database manager')
-        self.db_file = db_file
         self.conn = None
-        self.create_connection()
+        self.create_connection(
+            host=host,dbname=dbname, dbuser=dbuser, dbpassword=dbpassword)
         self.initialize_tables()
 
-    def create_connection(self):
+    def create_connection(self, host, dbname, dbuser, dbpassword):
         '''create a database connection to a SQLite database'''
         logger.info('Connecting to Database')
         try:
-            self.conn = sqlite3.connect(self.db_file)
-        except Error as e:
+            self.conn =  psycopg2.connect(
+                host=host, dbname=dbname, user=dbuser, password=dbpassword)
+        except Exception as e:
             print(e)
         finally:
             if self.conn:
@@ -41,8 +42,8 @@ class Database():
                 logger.debug("Execute SQL Statement: {}".format(sqlstatement))
                 c.execute(sqlstatement)
             self.conn.commit()
-        except Error as e:
-            print(e)
+        except Exception as e:
+            logger.error(e)
 
     def initialize_tables(self):
         '''Create the needed tables in the database'''
@@ -68,13 +69,14 @@ class Database():
                                     price INTEGER NOT NULL
                                 ); """
         sql_c_nftminted_table = """ CREATE TABLE IF NOT EXISTS nftminted (
-                                    nftindex INTEGER NOT NULL PRIMARY KEY,
+                                    nftindex INTEGER NOT NULL,
                                     blocknumber INTEGER NOT NULL,
                                     timestamp INTEGER NOT NULL,
-                                    destinationaddress TEXT NOT NULL
+                                    destinationaddress TEXT NOT NULL,
+                                    PRIMARY KEY (nftindex)
                                 ); """
         sql_c_tinvalidated_table = """ CREATE TABLE IF NOT EXISTS tinvalidated (
-                                    nftindex INTEGER NOT NULL PRIMARY KEY,
+                                    nftindex INTEGER NOT NULL,
                                     blocknumber INTEGER NOT NULL,
                                     timestamp INTEGER NOT NULL,
                                     getused INTEGER NOT NULL,
@@ -82,7 +84,7 @@ class Database():
                                     originaddress TEXT NOT NULL
                                 ); """
         sql_c_tscanned_table = """ CREATE TABLE IF NOT EXISTS tscanned (
-                                    nftindex INTEGER NOT NULL PRIMARY KEY,
+                                    nftindex INTEGER NOT NULL,
                                     blocknumber INTEGER NOT NULL,
                                     timestamp INTEGER NOT NULL,
                                     getused INTEGER NOT NULL,
@@ -106,7 +108,7 @@ class Database():
         sqlstatement = ''' INSERT INTO psale(
             nftindex, blocknumber, timestamp, getused,
             ordertime, destinationaddress, eventaddress, price)
-            VALUES(?,?,?,?,?,?,?,?) '''
+            VALUES((%s),(%s),(%s),(%s),(%s),(%s),(%s),(%s)) '''
 
         self.e_sqlstatement(sqlstatement, parameters)
 
@@ -122,7 +124,7 @@ class Database():
         sqlstatement = ''' INSERT INTO ssale(
             nftindex, blocknumber, timestamp, getused,
             ordertime, destinationaddress, eventaddress, price)
-            VALUES(?,?,?,?,?,?,?,?) '''
+            VALUES((%s),(%s),(%s),(%s),(%s),(%s),(%s),(%s)) '''
 
         self.e_sqlstatement(sqlstatement, parameters)
 
@@ -134,7 +136,7 @@ class Database():
         parameters = (nftindex, blocknumber, timestamp, destinationaddress)
         sqlstatement = ''' INSERT INTO nftminted(
             nftindex, blocknumber, timestamp, destinationaddress)
-            VALUES(?,?,?,?) '''
+            VALUES((%s),(%s),(%s),(%s)) '''
 
         self.e_sqlstatement(sqlstatement, parameters)
 
@@ -147,7 +149,7 @@ class Database():
                       getused, ordertime, originaddress)
         sqlstatement = ''' INSERT INTO tinvalidated(
             nftindex, blocknumber, timestamp, getused, ordertime, originaddress)
-            VALUES(?,?,?,?,?,?) '''
+            VALUES((%s),(%s),(%s),(%s),(%s),(%s)) '''
 
         self.e_sqlstatement(sqlstatement, parameters)
 
@@ -159,7 +161,7 @@ class Database():
         parameters = (nftindex, blocknumber, timestamp, getused, ordertime)
         sqlstatement = ''' INSERT INTO tscanned(
             nftindex, blocknumber, timestamp, getused, ordertime)
-            VALUES(?,?,?,?,?) '''
+            VALUES((%s),(%s),(%s),(%s),(%s)) '''
 
         self.e_sqlstatement(sqlstatement, parameters)
 
@@ -175,7 +177,7 @@ class Database():
             SELECT max(blocknumber) FROM tinvalidated
             UNION
             SELECT max(blocknumber) FROM tscanned
-            ORDER BY max(blocknumber) DESC
+            ORDER BY max DESC NULLS LAST
             LIMIT 1'''
         c = self.conn.cursor()
         c.execute(sqlstatement)

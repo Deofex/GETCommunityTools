@@ -7,8 +7,8 @@ from telegram.telegram import TelegramBot
 
 # Log level 1 is INFO, Log level 2 is Debug
 loglevel = int(os.environ.get('loglevel'))
-# Name of the database to write the trades and liquidity information to
-databasename = os.environ.get('databasename')
+# Database password
+dbpassword = os.environ.get('POSTGRES_PASSWORD')
 # Telegram API Token
 telegramapitoken = os.environ.get('telegramapitoken')
 
@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 logger.info('Start Reporter processor')
 
 # Initialize Database
-db = Database(databasename)
+db = Database(dbpassword)
 
 # Initialize bot
 tg = TelegramBot(telegramapitoken, db)
