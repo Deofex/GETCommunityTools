@@ -49,6 +49,7 @@ class Database():
         '''Create the needed tables in the database'''
         logger.info("Create tables if they doesn't exist yet")
         sql_c_psale_table = """ CREATE TABLE IF NOT EXISTS psale (
+                                    id SERIAL,
                                     nftindex INTEGER NOT NULL,
                                     blocknumber INTEGER NOT NULL,
                                     timestamp INTEGER NOT NULL,
@@ -56,9 +57,11 @@ class Database():
                                     ordertime INTEGER NOT NULL,
                                     destinationaddress TEXT NOT NULL,
                                     eventaddress TEXT NOT NULL,
-                                    price INTEGER NOT NULL
+                                    price INTEGER NOT NULL,
+                                    PRIMARY KEY (id)
                                 ); """
         sql_c_ssale_table = """ CREATE TABLE IF NOT EXISTS ssale (
+                                    id SERIAL,
                                     nftindex INTEGER NOT NULL,
                                     blocknumber INTEGER NOT NULL,
                                     timestamp INTEGER NOT NULL,
@@ -66,7 +69,8 @@ class Database():
                                     ordertime INTEGER NOT NULL,
                                     destinationaddress TEXT NOT NULL,
                                     eventaddress TEXT NOT NULL,
-                                    price INTEGER NOT NULL
+                                    price INTEGER NOT NULL,
+                                    PRIMARY KEY (id)
                                 ); """
         sql_c_nftminted_table = """ CREATE TABLE IF NOT EXISTS nftminted (
                                     nftindex INTEGER NOT NULL,
@@ -76,19 +80,23 @@ class Database():
                                     PRIMARY KEY (nftindex)
                                 ); """
         sql_c_tinvalidated_table = """ CREATE TABLE IF NOT EXISTS tinvalidated (
+                                    id SERIAL,
                                     nftindex INTEGER NOT NULL,
                                     blocknumber INTEGER NOT NULL,
                                     timestamp INTEGER NOT NULL,
                                     getused INTEGER NOT NULL,
                                     ordertime INTEGER NOT NULL,
-                                    originaddress TEXT NOT NULL
+                                    originaddress TEXT NOT NULL,
+                                    PRIMARY KEY (id)
                                 ); """
         sql_c_tscanned_table = """ CREATE TABLE IF NOT EXISTS tscanned (
+                                    id SERIAL,
                                     nftindex INTEGER NOT NULL,
                                     blocknumber INTEGER NOT NULL,
                                     timestamp INTEGER NOT NULL,
                                     getused INTEGER NOT NULL,
-                                    ordertime INTEGER NOT NULL
+                                    ordertime INTEGER NOT NULL,
+                                    PRIMARY KEY (id)
                                 ); """
         self.e_sqlstatement(sql_c_psale_table)
         self.e_sqlstatement(sql_c_ssale_table)
