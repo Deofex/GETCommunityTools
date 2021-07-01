@@ -42,7 +42,7 @@ class Database():
                 logger.debug("Execute SQL Statement: {}".format(sqlstatement))
                 c.execute(sqlstatement)
             self.conn.commit()
-        except Error as e:
+        except Exception as e:
             print(e)
 
     def initialize_tables(self):
