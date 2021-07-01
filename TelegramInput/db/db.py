@@ -1,6 +1,5 @@
 import logging
 import psycopg2
-from sqlite3 import Error
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -21,7 +20,7 @@ class Database():
         try:
             self.conn =  psycopg2.connect(
                 host=host, dbname=dbname, user=dbuser, password=dbpassword)
-        except Error as e:
+        except Exception as e:
             print(e)
         finally:
             if self.conn:
