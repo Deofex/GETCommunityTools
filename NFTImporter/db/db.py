@@ -177,7 +177,7 @@ class Database():
             SELECT max(blocknumber) FROM tinvalidated
             UNION
             SELECT max(blocknumber) FROM tscanned
-            ORDER BY max
+            ORDER BY max DESC NULLS LAST
             LIMIT 1'''
         c = self.conn.cursor()
         c.execute(sqlstatement)
