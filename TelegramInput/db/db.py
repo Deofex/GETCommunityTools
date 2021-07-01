@@ -43,7 +43,7 @@ class Database():
                 c.execute(sqlstatement)
             self.conn.commit()
         except Exception as e:
-            print(e)
+            logger.error(e)
 
     def initialize_tables(self):
         '''Create the needed tables in the database'''
