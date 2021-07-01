@@ -1,7 +1,7 @@
 import sys
 import os
 import logging
-from datetime import datetime
+from datetime import datetime, time, timedelta
 from db.db import Database
 from telegram.telegram import TelegramBot
 
@@ -78,10 +78,10 @@ def createrapport(reportdate, psalesummery, ssalesummery, tscanned):
 def getdayreport():
     # Calculate starttime (st) and endtime (et) in epoch format
     ct = datetime.now()
-    st = datetime(ct.year, ct.month, (ct.day - 1)).timestamp()
+    reportdate = datetime(ct.year, ct.month, ct.day) - timedelta(1)
+    st = reportdate.timestamp()
     et = datetime(ct.year, ct.month, ct.day).timestamp()
-    # Add the report date to a variabele
-    reportdate = datetime(ct.year, ct.month, (ct.day - 1))
+
     logger.info('Creating report for: {}'.format(reportdate))
     # Gather the primary sale summery from the database
     psalesummery = db.get_psalesummery(st, et)
