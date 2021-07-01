@@ -13,7 +13,7 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN apt-get update
 RUN apt-get upgrade -y
-RUN apt-get install -y gcc
+RUN apt-get install -y libpq-dev python-dev gcc
 RUN rm -rf /var/lib/apt/lists/*
 
 # Install pip requirements

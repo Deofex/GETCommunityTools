@@ -1,24 +1,25 @@
 import logging
-import sqlite3
-from sqlite3 import Error
+import psycopg2
 
 # Configure logging
 logger = logging.getLogger(__name__)
 
 
 class Database():
-    def __init__(self, db_file):
+    def __init__(
+        self, dbpassword, dbuser='nftdbuser', dbname='nftdb',host= 'db'):
         logger.info('Start new database manager')
-        self.db_file = db_file
         self.conn = None
-        self.create_connection()
+        self.create_connection(
+            host=host,dbname=dbname, dbuser=dbuser, dbpassword=dbpassword)
 
-    def create_connection(self):
+    def create_connection(self, host, dbname, dbuser, dbpassword):
         '''create a database connection to a SQLite database'''
         logger.info('Connecting to Database')
         try:
-            self.conn = sqlite3.connect(self.db_file)
-        except Error as e:
+            self.conn =  psycopg2.connect(
+                host=host, dbname=dbname, user=dbuser, password=dbpassword)
+        except Exception as e:
             print(e)
         finally:
             if self.conn:
@@ -31,18 +32,17 @@ class Database():
         logger.info('Get upcoming events')
         sqlstatement = '''WITH
         inscopeevents AS(
-            SELECT eventaddress,starttime,ticketeer
+            SELECT eventaddress,starttime,eventname
             FROM events
-            WHERE starttime > ?
-            AND starttime < ?
-            AND ticketeer != "Demo"
+            WHERE starttime BETWEEN (%s) AND (%s)
+            AND ticketeer != 'Demo'
         )
         SELECT eventname, psale.eventaddress, starttime, count(nftindex) as nfts
         FROM psale
-        INNER JOIN events
-        ON psale.eventaddress = events.eventaddress
+        INNER JOIN inscopeevents
+        ON psale.eventaddress = inscopeevents.eventaddress
         WHERE psale.eventaddress IN (SELECT eventaddress from inscopeevents)
-        GROUP BY psale.eventaddress
+        GROUP BY psale.eventaddress, eventname, starttime
         ORDER BY nfts DESC'''
         parameters = (mintime,maxtime)
         c = self.conn.cursor()

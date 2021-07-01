@@ -14,7 +14,8 @@ from w3.w3 import connect_w3, load_w3contract, get_w3eventdata
 loglevel = int(os.environ.get('loglevel'))
 polygonscanapikey = os.environ.get('polygonscanapikey')
 eventscontract = os.environ.get('eventscontract')
-databasename = os.environ.get('databasename')
+# Database password
+dbpassword = os.environ.get('POSTGRES_PASSWORD')
 w3url = os.environ.get('w3url')
 telegramapitoken = os.environ.get('telegramapitoken')
 # TODO: The ABI url below is from a proxy contract, how can this automatically be discovered?
@@ -40,8 +41,8 @@ logger.info('Start NFT Importer')
 # Import abi functions
 abifunctions = decode_abi_from_url(nftcontractabiurl)
 
-# Initialize database
-db = Database(databasename)
+# Initialize Database
+db = Database(dbpassword)
 
 # Initialize Telegram bot
 tg = TelegramBot(telegramapitoken,db)

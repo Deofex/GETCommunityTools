@@ -1,25 +1,26 @@
 import logging
-import sqlite3
-from sqlite3 import Error
+import psycopg2
 
 # Configure logging
 logger = logging.getLogger(__name__)
 
 
 class Database():
-    def __init__(self, db_file):
+    def __init__(
+        self, dbpassword, dbuser='nftdbuser', dbname='nftdb',host= 'db'):
         logger.info('Start new database manager')
-        self.db_file = db_file
         self.conn = None
-        self.create_connection()
+        self.create_connection(
+            host=host,dbname=dbname, dbuser=dbuser, dbpassword=dbpassword)
         self.initialize_tables()
 
-    def create_connection(self):
+    def create_connection(self, host, dbname, dbuser, dbpassword):
         '''create a database connection to a SQLite database'''
         logger.info('Connecting to Database')
         try:
-            self.conn = sqlite3.connect(self.db_file)
-        except Error as e:
+            self.conn =  psycopg2.connect(
+                host=host, dbname=dbname, user=dbuser, password=dbpassword)
+        except Exception as e:
             print(e)
         finally:
             if self.conn:
@@ -41,25 +42,26 @@ class Database():
                 logger.debug("Execute SQL Statement: {}".format(sqlstatement))
                 c.execute(sqlstatement)
             self.conn.commit()
-        except Error as e:
-            print(e)
+        except Exception as e:
+            logger.error(e)
 
     def initialize_tables(self):
         '''Create the needed tables in the database'''
         # Beware that other containers use the same DB
         logger.info("Create tgids table if it doesn't exist yet")
         sql_c_telegramchannels_table = """ CREATE TABLE IF NOT EXISTS tgids (
-                                    tgid TEXT NOT NULL PRIMARY KEY,
-                                    description TEXT NOT NULL
+                                    tgid TEXT NOT NULL,
+                                    description TEXT NOT NULL,
+                                    PRIMARY KEY (tgid)
                                 ); """
         self.e_sqlstatement(sql_c_telegramchannels_table)
 
     def check_telegramidexist(self, tgid):
         '''Checks or Telegram ID exist in database'''
         logger.debug('Check or tgid {} exists'.format(tgid))
-        parameters = (tgid,)
+        parameters = (str(tgid),)
         sqlstatement = '''SELECT EXISTS(
-                SELECT * FROM tgids WHERE tgid=?
+                SELECT * FROM tgids WHERE tgid=((%s))
             );
         '''
         c = self.conn.cursor()
@@ -80,7 +82,7 @@ class Database():
         parameters = (tgid, description)
         sqlstatement = ''' INSERT INTO tgids(
             tgid, description)
-            VALUES(?,?) '''
+            VALUES((%s),(%s)) '''
 
         self.e_sqlstatement(sqlstatement, parameters)
 
