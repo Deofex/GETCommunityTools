@@ -1,24 +1,25 @@
 import logging
-import sqlite3
-from sqlite3 import Error
+import psycopg2
 
 # Configure logging
 logger = logging.getLogger(__name__)
 
 
 class Database():
-    def __init__(self, db_file):
+    def __init__(
+        self, dbpassword, dbuser='nftdbuser', dbname='nftdb',host= 'db'):
         logger.info('Start new database manager')
-        self.db_file = db_file
         self.conn = None
-        self.create_connection()
+        self.create_connection(
+            host=host,dbname=dbname, dbuser=dbuser, dbpassword=dbpassword)
 
-    def create_connection(self):
+    def create_connection(self, host, dbname, dbuser, dbpassword):
         '''create a database connection to a SQLite database'''
         logger.info('Connecting to Database')
         try:
-            self.conn = sqlite3.connect(self.db_file)
-        except Error as e:
+            self.conn =  psycopg2.connect(
+                host=host, dbname=dbname, user=dbuser, password=dbpassword)
+        except Exception as e:
             print(e)
         finally:
             if self.conn:
@@ -33,7 +34,7 @@ class Database():
             FROM psale
             INNER JOIN events
             ON events.eventaddress = psale.eventaddress
-            WHERE psale.timestamp > ? AND psale.timestamp < ?
+            WHERE psale.timestamp > (%s) AND psale.timestamp < (%s)
             GROUP BY eventname
             ORDER BY nfts DESC
             '''
@@ -50,7 +51,7 @@ class Database():
             FROM ssale
             INNER JOIN events
             ON events.eventaddress = ssale.eventaddress
-            WHERE ssale.timestamp > ? AND ssale.timestamp < ?
+            WHERE ssale.timestamp > (%s) AND ssale.timestamp < (%s)
             GROUP BY eventname
             ORDER BY nfts DESC
             '''
@@ -69,7 +70,7 @@ class Database():
                 ON tscanned.nftindex = psale.nftindex
                 INNER JOIN events
                 ON psale.eventaddress = events.eventaddress
-                WHERE tscanned.timestamp > ? AND tscanned.timestamp < ?
+                WHERE tscanned.timestamp > (%s) AND tscanned.timestamp < (%s)
                 GROUP BY eventname
                 ORDER BY nfts DESC
             '''
