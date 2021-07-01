@@ -12,7 +12,8 @@ import logprocessor
 loglevel = int(os.environ.get('loglevel'))
 polygonscanapikey = os.environ.get('polygonscanapikey')
 nftcontract = os.environ.get('nftcontract')
-databasename = os.environ.get('databasename')
+# Database password
+dbpassword = os.environ.get('POSTGRES_PASSWORD')
 # TODO: The ABI url below is from a proxy contract, how can this automatically be discovered?
 nftcontractabiurl = 'https://api.polygonscan.com/api?module=contract&action=getabi&address=0x4e84f3edc7be55c311162e30f3388b194e4fbdb5&format=raw'
 
@@ -34,7 +35,7 @@ logger = logging.getLogger(__name__)
 logger.info('Start NFT Importer')
 
 # Initialize Database
-db = Database(databasename)
+db = Database(dbpassword)
 
 # Initialize importer
 bli = BlockchainLogImporter(polygonscanapikey,nftcontract)
