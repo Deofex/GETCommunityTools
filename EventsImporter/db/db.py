@@ -1,25 +1,26 @@
 import logging
-import sqlite3
-from sqlite3 import Error
+import psycopg2
 
 # Configure logging
 logger = logging.getLogger(__name__)
 
 
 class Database():
-    def __init__(self, db_file):
+    def __init__(
+        self, dbpassword, dbuser='nftdbuser', dbname='nftdb',host= 'db'):
         logger.info('Start new database manager')
-        self.db_file = db_file
         self.conn = None
-        self.create_connection()
+        self.create_connection(
+            host=host,dbname=dbname, dbuser=dbuser, dbpassword=dbpassword)
         self.initialize_tables()
 
-    def create_connection(self):
+    def create_connection(self, host, dbname, dbuser, dbpassword):
         '''create a database connection to a SQLite database'''
         logger.info('Connecting to Database')
         try:
-            self.conn = sqlite3.connect(self.db_file)
-        except Error as e:
+            self.conn =  psycopg2.connect(
+                host=host, dbname=dbname, user=dbuser, password=dbpassword)
+        except Exception as e:
             print(e)
         finally:
             if self.conn:
@@ -29,23 +30,27 @@ class Database():
 
     def e_sqlstatement(self, sqlstatement, parameters=None):
         '''Execute SQL statement'''
-        c = self.conn.cursor()
-        logger.info(
-            'Running SQL statement (set logging on debug for more info)')
-        if parameters:
-            logger.debug("Execute SQL Statement: {}. Parameters {}".format(
-                sqlstatement, parameters))
-            c.execute(sqlstatement, parameters)
-        else:
-            logger.debug("Execute SQL Statement: {}".format(sqlstatement))
-            c.execute(sqlstatement)
-        self.conn.commit()
+        try:
+            c = self.conn.cursor()
+            logger.info(
+                'Running SQL statement (set logging on debug for more info)')
+            if parameters:
+                logger.debug("Execute SQL Statement: {}. Parameters {}".format(
+                    sqlstatement, parameters))
+                c.execute(sqlstatement, parameters)
+            else:
+                logger.debug("Execute SQL Statement: {}".format(sqlstatement))
+                c.execute(sqlstatement)
+            self.conn.commit()
+        except Exception as e:
+            logger.error(e)
+
 
     def initialize_tables(self):
         '''Create the needed tables in the database'''
         logger.info("Create tables if they doesn't exist yet")
         sql_c_events_table = """ CREATE TABLE IF NOT EXISTS events (
-                                    eventaddress TEXT NOT NULL PRIMARY KEY,
+                                    eventaddress TEXT NOT NULL,
                                     blocknumber INTEGER NOT NULL,
                                     timestamp INTEGER NOT NULL,
                                     getused INTEGER NOT NULL,
@@ -61,7 +66,8 @@ class Database():
                                     ticketeer TEXT NOT NULL,
                                     starttime INTEGER NOT NULL,
                                     endtime INTEGER NOT NULL,
-                                    privateevent INTEGER NOT NULL
+                                    privateevent INTEGER NOT NULL,
+                                    PRIMARY KEY (eventaddress)
                                 ); """
 
         self.e_sqlstatement(sql_c_events_table)
@@ -83,7 +89,8 @@ class Database():
                      eventname, shopurl,imageurl, longitude, latitude,
                      currency, ticketeer, starttime, endtime, privateevent
                      )
-            VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) '''
+            VALUES((%s),(%s),(%s),(%s),(%s),(%s),(%s),(%s),(%s),(%s),(%s),(%s),
+            (%s),(%s),(%s),(%s),(%s)) '''
 
         self.e_sqlstatement(sqlstatement, parameters)
 
@@ -100,23 +107,23 @@ class Database():
                       currency, ticketeer, starttime, endtime, privateevent,
                       eventaddress)
         sqlstatement = ''' UPDATE events
-                     SET blocknumber = ?,
-                     timestamp = ?,
-                     getused = ?,
-                     ordertime = ?,
-                     integratoraddress = ?,
-                     underwriteraddress = ?,
-                     eventname = ?,
-                     shopurl = ?,
-                     imageurl = ?,
-                     longitude = ?,
-                     latitude = ?,
-                     currency = ?,
-                     ticketeer = ?,
-                     starttime = ?,
-                     endtime = ?,
-                     privateevent = ?
-                     WHERE eventaddress = ?
+                     SET blocknumber = (%s),
+                     timestamp = (%s),
+                     getused = (%s),
+                     ordertime = (%s),
+                     integratoraddress = (%s),
+                     underwriteraddress = (%s),
+                     eventname = (%s),
+                     shopurl = (%s),
+                     imageurl = (%s),
+                     longitude = (%s),
+                     latitude = (%s),
+                     currency = (%s),
+                     ticketeer = (%s),
+                     starttime = (%s),
+                     endtime = (%s),
+                     privateevent = (%s)
+                     WHERE eventaddress = (%s)
                     '''
 
         self.e_sqlstatement(sqlstatement, parameters)
@@ -125,7 +132,7 @@ class Database():
         '''Checks or an event exist in the database'''
         parameters = (eventaddress,)
         sqlstatement = ''' SELECT eventaddress from events
-                    WHERE eventaddress = ? '''
+                    WHERE eventaddress = (%s) '''
         c = self.conn.cursor()
         c.execute(sqlstatement, parameters)
         returnvalue = c.fetchall()
