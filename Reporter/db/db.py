@@ -70,7 +70,7 @@ class Database():
                 ON tscanned.nftindex = psale.nftindex
                 INNER JOIN events
                 ON psale.eventaddress = events.eventaddress
-                WHERE tscanned.timestamp > (%s) AND tscanned.timestamp < (%s)
+                WHERE tscanned.timestamp BETWEEN (%s) AND (%s)
                 GROUP BY eventname
                 ORDER BY nfts DESC
             '''
