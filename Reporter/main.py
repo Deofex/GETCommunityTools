@@ -42,30 +42,42 @@ def createrapport(reportdate, psalesummery, ssalesummery, tscanned):
         t = 0
         report += "<b>Tickets sold on the primary market:</b>\n"
         for e in psalesummery:
+            if e[0] == None:
+                n = 'Unregistered/Private events'
+            else:
+                n = e[0]
             i += 1
             t += e[1]
             report += ("<b>{})</b> {} --> {}\n".format(
-                i, e[0], e[1]))
+                i, n, e[1]))
         report += '<b>Total Amount: {}</b>\n\n'.format(t)
     if len(ssalesummery) > 0:
         i = 0
         t = 0
         report += "<b>Tickets sold on the secondary market:</b>\n"
         for e in ssalesummery:
+            if e[0] == None:
+                n = 'Unregistered/Private events'
+            else:
+                n = e[0]
             i += 1
             t += e[1]
             report += ("<b>{})</b> {} --> {}\n".format(
-                i, e[0], e[1]))
+                i, n, e[1]))
         report += '<b>Total Amount: {}</b>\n\n'.format(t)
     if len(tscanned) > 0:
         i = 0
         t = 0
         report += "<b>Tickets scanned:</b>\n"
         for e in tscanned:
+            if e[0] == None:
+                n = 'Unregistered/Private events'
+            else:
+                n = e[0]
             i += 1
             t += e[1]
             report += ("<b>{})</b> {} --> {}\n".format(
-                i, e[0], e[1]))
+                i, n, e[1]))
         report += '<b>Total Amount: {}</b>\n\n'.format(t)
 
     report += ("<a href=\"https://explorer.get-protocol.io/\">"

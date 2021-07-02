@@ -32,9 +32,9 @@ class Database():
         logger.info('Gather primary sale summery')
         sqlstatement = '''SELECT eventname, count(nftindex) as nfts
             FROM psale
-            INNER JOIN events
+            LEFT JOIN events
             ON events.eventaddress = psale.eventaddress
-            WHERE psale.timestamp > (%s) AND psale.timestamp < (%s)
+            WHERE psale.timestamp BETWEEN (%s) AND (%s)
             GROUP BY eventname
             ORDER BY nfts DESC
             '''
@@ -49,9 +49,9 @@ class Database():
         logger.info('Gather secondary sale summery')
         sqlstatement = '''SELECT eventname, count(nftindex) as nfts
             FROM ssale
-            INNER JOIN events
+            LEFT JOIN events
             ON events.eventaddress = ssale.eventaddress
-            WHERE ssale.timestamp > (%s) AND ssale.timestamp < (%s)
+            WHERE ssale.timestamp BETWEEN (%s) AND (%s)
             GROUP BY eventname
             ORDER BY nfts DESC
             '''
@@ -68,7 +68,7 @@ class Database():
                 FROM tscanned
                 INNER JOIN psale
                 ON tscanned.nftindex = psale.nftindex
-                INNER JOIN events
+                LEFT JOIN events
                 ON psale.eventaddress = events.eventaddress
                 WHERE tscanned.timestamp BETWEEN (%s) AND (%s)
                 GROUP BY eventname
