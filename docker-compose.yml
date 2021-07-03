@@ -31,6 +31,12 @@ services:
             - prod.env
         depends_on:
             - "db"
+    PriceImporter:
+        image: deofex/getnftbot:priceimporter
+        env_file:
+            - prod.env
+        depends_on:
+            - "db"
     db:
         image: postgres
         volumes:
