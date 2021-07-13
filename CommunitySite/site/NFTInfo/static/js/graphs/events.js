@@ -10,7 +10,7 @@ var chart = new Chart(ctx, {
     data: {
         labels: last30daysperiodnames,
         datasets: [{
-            label: 'Statechanges per day',
+            label: 'Events registered',
             backgroundColor: '#00798a',
             fill: true,
             borderColor: '#01C696',
