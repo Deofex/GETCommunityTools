@@ -34,7 +34,7 @@ class Psale(models.Model):
     getused = models.IntegerField()
     ordertime = models.IntegerField()
     destinationaddress = models.TextField()
-    eventaddress = models.TextField()
+    eventaddress = models.ForeignKey(Events,to_field="eventaddress",db_column="eventaddress",on_delete=models.CASCADE)
     price = models.IntegerField()
 
     class Meta:

@@ -185,4 +185,14 @@ p {
     }
 }
 
-.top-buffer { margin-top:20px; }
+.top-buffer {
+    margin-top:20px;
+}
+
+tr {
+    color: white;
+}
+
+td {
+    color:white
+}
