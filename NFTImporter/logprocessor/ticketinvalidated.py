@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 
 # Initialize logger
 logger = logging.getLogger(__name__)
@@ -12,18 +13,26 @@ def wallettostring(wallet):
     return ws
 
 
-def ticketinvalidated(log,db):
+def get_timestampday(timestamp):
+    d = datetime.fromtimestamp(timestamp)
+    sd = datetime(d.year, d.month, d.day)
+    sdt = sd.timestamp()
+    return sdt
+
+
+def ticketinvalidated(log, db):
     logger.info('New ticket invalidated found in blocknumber: {}'.format(
         int(log['blockNumber'], 16)))
 
     invalidateinfo = {
-        'nftindex':int(log['topics'][1], 16),
-        'blocknumber':int(log['blockNumber'], 16),
-        'timestamp':int(log['timeStamp'], 16),
-        'getused':int(log['topics'][2], 16),
-        'ordertime':int(log['topics'][3], 16),
-        'originaddress':wallettostring(log['data']),
-        }
+        'nftindex': int(log['topics'][1], 16),
+        'blocknumber': int(log['blockNumber'], 16),
+        'timestamp': int(log['timeStamp'], 16),
+        'timestampday': get_timestampday(int(log['timeStamp'], 16)),
+        'getused': int(log['topics'][2], 16),
+        'ordertime': int(log['topics'][3], 16),
+        'originaddress': wallettostring(log['data']),
+    }
 
     db.create_tinvalidated(**invalidateinfo)
     return invalidateinfo

@@ -1,5 +1,5 @@
 import logging
-import datetime
+from datetime import datetime
 
 # Initialize logger
 logger = logging.getLogger(__name__)
@@ -11,6 +11,12 @@ def wallettostring(wallet):
         addzeros = 42 - len(ws)
         ws = ws.replace("0x", "0x" + "0" * addzeros)
     return ws
+
+def get_timestampday(timestamp):
+    d = datetime.fromtimestamp(timestamp)
+    sd = datetime(d.year,d.month,d.day)
+    sdt = sd.timestamp()
+    return sdt
 
 
 def neweventregistered(log, eventdata, db, tg):
@@ -26,6 +32,7 @@ def neweventregistered(log, eventdata, db, tg):
         'eventaddress': wallettostring(log['topics'][1]),
         'blocknumber': int(log['blockNumber'], 16),
         'timestamp': int(log['timeStamp'], 16),
+        'timestampday': get_timestampday(int(log['timeStamp'], 16)),
         'getused': int(log['topics'][2], 16),
         'ordertime': int(log['topics'][3], 16),
         'integratoraddress': eventdata[0],
@@ -91,7 +98,7 @@ def communicate_newevent(
         eventname=eventname,
         transactionhash=transactionhash,
         shopurl=shopurl,
-        date=datetime.datetime.fromtimestamp(date).strftime(
+        date=datetime.fromtimestamp(date).strftime(
             '%Y-%m-%d %H:%M'),
         ticketeer=ticketeer
     )
@@ -120,7 +127,7 @@ def communicate_updateevent(
         eventname=eventname,
         transactionhash=transactionhash,
         shopurl=shopurl,
-        date=datetime.datetime.fromtimestamp(date).strftime(
+        date=datetime.fromtimestamp(date).strftime(
             '%Y-%m-%d %H:%M'),
         ticketeer=ticketeer
     )

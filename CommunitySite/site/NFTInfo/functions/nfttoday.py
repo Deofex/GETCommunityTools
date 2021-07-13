@@ -1,4 +1,3 @@
-from django.db.models import Count
 from datetime import datetime
 from ..models import Psale, Ssale, Tscanned
 

@@ -7,18 +7,18 @@ logger = logging.getLogger(__name__)
 
 class Database():
     def __init__(
-        self, dbpassword, dbuser='nftdbuser', dbname='nftdb',host= 'db'):
+            self, dbpassword, dbuser='nftdbuser', dbname='nftdb', host='db'):
         logger.info('Start new database manager')
         self.conn = None
         self.create_connection(
-            host=host,dbname=dbname, dbuser=dbuser, dbpassword=dbpassword)
+            host=host, dbname=dbname, dbuser=dbuser, dbpassword=dbpassword)
         self.initialize_tables()
 
     def create_connection(self, host, dbname, dbuser, dbpassword):
         '''create a database connection to a SQLite database'''
         logger.info('Connecting to Database')
         try:
-            self.conn =  psycopg2.connect(
+            self.conn = psycopg2.connect(
                 host=host, dbname=dbname, user=dbuser, password=dbpassword)
         except Exception as e:
             print(e)
@@ -45,7 +45,6 @@ class Database():
         except Exception as e:
             logger.error(e)
 
-
     def initialize_tables(self):
         '''Create the needed tables in the database'''
         logger.info("Create tables if they doesn't exist yet")
@@ -53,6 +52,7 @@ class Database():
                                     eventaddress TEXT NOT NULL,
                                     blocknumber INTEGER NOT NULL,
                                     timestamp INTEGER NOT NULL,
+                                    timestampday INTEGER NOT NULL,
                                     getused INTEGER NOT NULL,
                                     ordertime INTEGER NOT NULL,
                                     integratoraddress TEXT NOT NULL,
@@ -72,36 +72,36 @@ class Database():
 
         self.e_sqlstatement(sql_c_events_table)
 
-    def create_event(self, eventaddress, blocknumber, timestamp, getused,
-                     ordertime, integratoraddress, underwriteraddress,
+    def create_event(self, eventaddress, blocknumber, timestamp, timestampday,
+                     getused, ordertime, integratoraddress, underwriteraddress,
                      eventname, shopurl, imageurl, longitude, latitude,
                      currency, ticketeer, starttime, endtime, privateevent):
         '''Add an event to the database'''
         logger.info("Adding an event to the database")
 
-        parameters = (eventaddress, blocknumber, timestamp, getused,
-                      ordertime, integratoraddress, underwriteraddress,
+        parameters = (eventaddress, blocknumber, timestamp, timestampday,
+                      getused, ordertime, integratoraddress, underwriteraddress,
                       eventname, shopurl, imageurl, longitude, latitude,
                       currency, ticketeer, starttime, endtime, privateevent)
         sqlstatement = ''' INSERT INTO events(
-                     eventaddress, blocknumber, timestamp, getused,
-                     ordertime, integratoraddress, underwriteraddress,
+                     eventaddress, blocknumber, timestamp, timestampday,
+                     getused, ordertime, integratoraddress, underwriteraddress,
                      eventname, shopurl,imageurl, longitude, latitude,
                      currency, ticketeer, starttime, endtime, privateevent
                      )
             VALUES((%s),(%s),(%s),(%s),(%s),(%s),(%s),(%s),(%s),(%s),(%s),(%s),
-            (%s),(%s),(%s),(%s),(%s)) '''
+            (%s),(%s),(%s),(%s),(%s),(%s)) '''
 
         self.e_sqlstatement(sqlstatement, parameters)
 
-    def update_event(self, eventaddress, blocknumber, timestamp, getused,
-                     ordertime, integratoraddress, underwriteraddress,
+    def update_event(self, eventaddress, blocknumber, timestamp, timestampday,
+                     getused, ordertime, integratoraddress, underwriteraddress,
                      eventname, shopurl, imageurl, longitude, latitude,
                      currency, ticketeer, starttime, endtime, privateevent):
         '''Update an event to the database'''
         logger.info("Updating an event to the database")
 
-        parameters = (blocknumber, timestamp, getused,
+        parameters = (blocknumber, timestamp, timestampday, getused,
                       ordertime, integratoraddress, underwriteraddress,
                       eventname, shopurl, imageurl, longitude, latitude,
                       currency, ticketeer, starttime, endtime, privateevent,
@@ -109,6 +109,7 @@ class Database():
         sqlstatement = ''' UPDATE events
                      SET blocknumber = (%s),
                      timestamp = (%s),
+                     timestampday = (%s),
                      getused = (%s),
                      ordertime = (%s),
                      integratoraddress = (%s),
@@ -166,7 +167,7 @@ class Database():
                     'tgids table doesn''t exist(is the tg importer running?')
                 return []
             else:
-                raise Exception('Unknown TG Channels retrieval error',e)
+                raise Exception('Unknown TG Channels retrieval error', e)
         f = c.fetchall()
         data = sql_to_dic(c.description, f)
         return data

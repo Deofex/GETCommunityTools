@@ -5,6 +5,7 @@ class Events(models.Model):
     eventaddress = models.TextField(primary_key=True)
     blocknumber = models.IntegerField()
     timestamp = models.IntegerField()
+    timestampday = models.IntegerField()
     getused = models.IntegerField()
     ordertime = models.IntegerField()
     integratoraddress = models.TextField()
@@ -25,21 +26,11 @@ class Events(models.Model):
         db_table = 'events'
 
 
-class Nftminted(models.Model):
-    nftindex = models.IntegerField(primary_key=True)
-    blocknumber = models.IntegerField()
-    timestamp = models.IntegerField()
-    destinationaddress = models.TextField()
-
-    class Meta:
-        managed = False
-        db_table = 'nftminted'
-
-
 class Psale(models.Model):
     nftindex = models.IntegerField(unique=True)
     blocknumber = models.IntegerField()
     timestamp = models.IntegerField()
+    timestampday = models.IntegerField()
     getused = models.IntegerField()
     ordertime = models.IntegerField()
     destinationaddress = models.TextField()
@@ -55,6 +46,7 @@ class Ssale(models.Model):
     nftindex = models.IntegerField()
     blocknumber = models.IntegerField()
     timestamp = models.IntegerField()
+    timestampday = models.IntegerField()
     getused = models.IntegerField()
     ordertime = models.IntegerField()
     destinationaddress = models.TextField()
@@ -79,6 +71,7 @@ class Tinvalidated(models.Model):
     nftindex = models.IntegerField()
     blocknumber = models.IntegerField()
     timestamp = models.IntegerField()
+    timestampday = models.IntegerField()
     getused = models.IntegerField()
     ordertime = models.IntegerField()
     originaddress = models.TextField()
@@ -92,6 +85,7 @@ class Tscanned(models.Model):
     nftindex = models.ForeignKey(Psale,to_field="nftindex",db_column="nftindex",on_delete=models.CASCADE)
     blocknumber = models.IntegerField()
     timestamp = models.IntegerField()
+    timestampday = models.IntegerField()
     getused = models.IntegerField()
     ordertime = models.IntegerField()
 

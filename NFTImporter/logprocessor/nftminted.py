@@ -13,6 +13,8 @@ def wallettostring(wallet):
 
 
 def nftminted(log,db):
+    # This function gives an error, because it's phased out from the database
+    # will be removed completely later on
     logger.info('New nft mint found in blocknumber: {}'.format(
         int(log['blockNumber'], 16)))
 

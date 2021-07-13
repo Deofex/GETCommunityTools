@@ -58,7 +58,8 @@ body {
 }
 
 .card {
-    background-color: #343a40;
+    border: 1px solid #dee2e6 !important;
+    background-color: transparent;
 }
 
 body {
@@ -183,3 +184,5 @@ p {
         margin-bottom: 4px;
     }
 }
+
+.top-buffer { margin-top:20px; }
