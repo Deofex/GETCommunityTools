@@ -16,12 +16,20 @@ def page_home(request):
 
 
 def page_statechanges(request):
+    last30dayssc = get_last30daysstatechanges()
+    last30daysscperiodnames = [d.periodname for d in last30dayssc]
+    last30daysscvalues = [d.value for d in last30dayssc]
     return render(request, 'NFTInfo/statechanges.html', {
-        'last30daysstatechanges': get_last30daysstatechanges()
+        'last30daysscperiodnames': last30daysscperiodnames,
+        'last30daysscvalues': last30daysscvalues
     })
 
 
 def page_events(request):
+    thirtydaysevents = get_last30daysevents()
+    last30daysperiodnames = [d.periodname for d in thirtydaysevents]
+    last30daysvalues = [d.value for d in thirtydaysevents]
     return render(request, 'NFTInfo/events.html', {
-        'last30daysevents': get_last30daysevents()
+        'last30daysperiodnames': last30daysperiodnames,
+        'last30daysvalues': last30daysvalues
     })
