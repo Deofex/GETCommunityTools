@@ -2,7 +2,7 @@ from django.shortcuts import render
 from .models import Prices
 from .functions.nfttoday import ticketssoldlast24h, ticketsscannedlast24h, \
     eventslast24h
-from .functions.nftmonthly import get_last30daysstatechanges
+from .functions.nftmonthly import get_last30daysinteractions
 from .functions.eventsmonthly import get_last30daysevents
 from .functions.eventsthirtydays import eventsthirtydays
 from .functions.eventscreatewordcloud import create_eventscreateworldcloud
@@ -17,11 +17,11 @@ def page_home(request):
     })
 
 
-def page_statechanges(request):
-    last30dayssc = get_last30daysstatechanges()
+def page_interactions(request):
+    last30dayssc = get_last30daysinteractions()
     last30daysscperiodnames = [d.periodname for d in last30dayssc]
     last30daysscvalues = [d.value for d in last30dayssc]
-    return render(request, 'NFTInfo/statechanges.html', {
+    return render(request, 'NFTInfo/interactions.html', {
         'last30daysscperiodnames': last30daysscperiodnames,
         'last30daysscvalues': last30daysscvalues
     })

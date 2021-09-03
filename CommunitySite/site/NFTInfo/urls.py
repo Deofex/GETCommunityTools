@@ -6,9 +6,9 @@ urlpatterns = [
          views.page_home,
          name='page_home'
          ),
-    path('statechanges',
-         views.page_statechanges,
-         name='page_statechanges'
+    path('interactions',
+         views.page_interactions,
+         name='page_interactions'
          ),
     path('events',
          views.page_events,

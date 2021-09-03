@@ -1,6 +1,6 @@
 const last30daysscperiodnames = JSON.parse(document.getElementById('last30daysscperiodnames').textContent);
 const last30daysscvalues = JSON.parse(document.getElementById('last30daysscvalues').textContent);
-var ctx = document.getElementById('chart_last30daysstatechanges').getContext('2d');
+var ctx = document.getElementById('chart_last30daysinteractions').getContext('2d');
 Chart.defaults.color = '#ffffff';
 Chart.defaults.font.family = '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji"';
 Chart.defaults.font.size = 16;
@@ -10,7 +10,7 @@ var chart = new Chart(ctx, {
     data: {
         labels: last30daysscperiodnames,
         datasets: [{
-            label: 'Statechanges per day',
+            label: 'Interactions per day',
             backgroundColor: '#00798a',
             fill: true,
             borderColor: '#01C696',

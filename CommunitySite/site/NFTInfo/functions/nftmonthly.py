@@ -2,7 +2,7 @@ from .shared.graphinfo import GraphInfo
 from .shared.get_last30days import get_last30days
 from ..models import Psale, Ssale, Tscanned,Tinvalidated
 
-def get_last30daysstatechanges():
+def get_last30daysinteractions():
     days = get_last30days()
 
     result = []
