@@ -13,25 +13,29 @@
     <script src="{% static 'js/wordcloud/wordcloud.js' %}"></script>
 </div>
 <script>
-    var canvas = document.getElementById('wordcloud_30dayseventsv2');
-    var surrounding = document.getElementById("sourrounding_wordcloud_30dayseventsv2");
-    canvas.width = surrounding.offsetWidth;
-    canvas.height = surrounding.offsetHeight;
-    var gridsize = canvas.width / 40;
+    function draweventwordcloud() {
+        var canvas = document.getElementById('wordcloud_30dayseventsv2');
+        var surrounding = document.getElementById("sourrounding_wordcloud_30dayseventsv2");
+        canvas.width = surrounding.offsetWidth;
+        canvas.height = surrounding.offsetHeight;
+        var gridsize = canvas.width / 40;
 
-    var myWords = JSON.parse(document.getElementById('eventswordcloudlist').textContent);
-    var options2 = {
-        list: myWords,
-        fontFamily: 'Times, serif',
-        weightFactor: 6,
-        color: '#01C696',
-        backgroundColor: 'black',
-        drawOutOfBound: false,
-        shrinkToFit: true,
-        minSize: 5,
-        gridsize: gridsize,
+        var myWords = JSON.parse(document.getElementById('eventswordcloudlist').textContent);
+        var options2 = {
+            list: myWords,
+            fontFamily: 'Times, serif',
+            weightFactor: 6,
+            color: '#01C696',
+            backgroundColor: 'black',
+            drawOutOfBound: false,
+            shrinkToFit: true,
+            minSize: 5,
+            gridsize: gridsize,
+        };
+        WordCloud(document.getElementById('wordcloud_30dayseventsv2'), options2);
     };
-    WordCloud(document.getElementById('wordcloud_30dayseventsv2'), options2);
+    draweventwordcloud();
+    window.addEventListener("resize", draweventwordcloud);
 </script>
 <div class="row">
     <div class="col">
