@@ -5,6 +5,7 @@ from .functions.nfttoday import ticketssoldlast24h, ticketsscannedlast24h, \
 from .functions.nftmonthly import get_last30daysstatechanges
 from .functions.eventsmonthly import get_last30daysevents
 from .functions.eventsthirtydays import eventsthirtydays
+from .functions.eventscreatewordcloud import create_eventscreateworldcloud
 
 
 def page_home(request):
@@ -27,14 +28,21 @@ def page_statechanges(request):
 
 
 def page_events(request):
-    # Select info for the last 30 days event graph (2 lists, 1 with periods,
+    # Select info for the upcoming 30 days event graph (2 lists, 1 with periods,
     # 1 with values)
     thirtydaysevents = get_last30daysevents()
     last30daysperiodnames = [d.periodname for d in thirtydaysevents]
     last30daysvalues = [d.value for d in thirtydaysevents]
 
+    # Select last 30 days events
+    events30days = eventsthirtydays()
+
+    # Create word cloud data
+    eventswordcloudlist = create_eventscreateworldcloud(events30days)
+
     return render(request, 'NFTInfo/events.html', {
         'last30daysperiodnames': last30daysperiodnames,
         'last30daysvalues': last30daysvalues,
-        'events30days': eventsthirtydays()
+        'events30days': events30days,
+        'eventswordcloudlist': eventswordcloudlist
     })

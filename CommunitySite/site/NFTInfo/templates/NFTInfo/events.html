@@ -2,13 +2,40 @@
 {% load static %}
 {% block content %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://d3js.org/d3.v4.js"></script>
+<div class="row">
+    <div class="col">
+        {{ eventswordcloudlist |json_script:"eventswordcloudlist"}}
+        <canvas id="wordcloud_30dayseventsv2", class=canvas, width="1000", height="250">
+    </div>
+    <script src="{% static 'js/wordcloud/wordcloud.js' %}"></script>
+</div>
+<script>
+    var canvas = document.getElementById('wordcloud_30dayseventsv2');
+    canvas.width = canvas.parentElement.clientWidth;
+    canvas.height = screen.height / 3;
+
+    var myWords = JSON.parse(document.getElementById('eventswordcloudlist').textContent);
+    var options2 = {
+        list: myWords,
+        fontFamily: 'Times, serif',
+        weightFactor: 6,
+        color: '#01C696',
+        backgroundColor: 'black',
+        drawOutOfBound: false,
+        gridSize: 32,
+        shrinkToFit: true,
+        minSize: 3
+    };
+    WordCloud(document.getElementById('wordcloud_30dayseventsv2'), options2);
+</script>
 <div class="row">
     <div class="col">
         <div class="h-100 p-5 border rounded-3">
             <h1 class="display-7">Events</h1>
             <p class="lead">The places where GET flows</p>
             <p>
-                Tickets are used at different events. A plane flight, a cabaret show, a festival. This page is displaying the different events for which <b class=getcolor>GET</b> is used and their statistics. However, it doesn’t show the name of the events. This is caused by the circumstance that the <b class=getcolor>GET</b> foundation isn’t publishing event names publicly (yet). Publishing event names on the blockchain, would spoil the announcements which is done by event organizer. With some dedication, you will be able to link an event name to the appropriate event. </p>
+                Tickets are used at a lot of different kind of events. Think about your regular life and the events where tickets are used: Plane flights, cabaret shows, festivals, parking garages, public transport, museums. This page is displaying the different events for which <b class=getcolor>GET</b> is used and the number of tickets which are sold for each of these events. This will give you an idea of the adoption of the <b class=getcolor>GET Protocol</b>. </p>
             <div class="card-body fixmidsize">
                 {{ last30daysperiodnames|json_script:"last30daysperiodnames"}}
                 {{ last30daysvalues|json_script:"last30daysvalues"}}
@@ -20,6 +47,7 @@
 <div class="row">
     <div class="col-1"></div>
     <div class="col-10">
+        <h1 class=center>Events finding place in the upcoming 30 days</h1>
         <table class="table table-hover border">
             <thead>
                 <tr>

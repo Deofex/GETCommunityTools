@@ -196,3 +196,7 @@ tr {
 td {
     color:white
 }
+
+canvas {
+    margin-bottom: 3vh;
+}
