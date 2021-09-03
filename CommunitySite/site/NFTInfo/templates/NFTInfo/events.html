@@ -4,16 +4,20 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://d3js.org/d3.v4.js"></script>
 <div class="row">
-    <div class="col">
-        {{ eventswordcloudlist |json_script:"eventswordcloudlist"}}
-        <canvas id="wordcloud_30dayseventsv2", class=canvas, width="1000", height="250">
+    <div class="col" style="height: 50vh;">
+        <div id="sourrounding_wordcloud_30dayseventsv2" style="height: 100%">
+            {{ eventswordcloudlist |json_script:"eventswordcloudlist"}}
+            <canvas id="wordcloud_30dayseventsv2" , class=canvas>
+        </div>
     </div>
     <script src="{% static 'js/wordcloud/wordcloud.js' %}"></script>
 </div>
 <script>
     var canvas = document.getElementById('wordcloud_30dayseventsv2');
-    canvas.width = canvas.parentElement.clientWidth;
-    canvas.height = screen.height / 3;
+    var surrounding = document.getElementById("sourrounding_wordcloud_30dayseventsv2");
+    canvas.width = surrounding.offsetWidth;
+    canvas.height = surrounding.offsetHeight;
+    var gridsize = canvas.width / 40;
 
     var myWords = JSON.parse(document.getElementById('eventswordcloudlist').textContent);
     var options2 = {
@@ -23,9 +27,9 @@
         color: '#01C696',
         backgroundColor: 'black',
         drawOutOfBound: false,
-        gridSize: 32,
         shrinkToFit: true,
-        minSize: 3
+        minSize: 5,
+        gridsize: gridsize,
     };
     WordCloud(document.getElementById('wordcloud_30dayseventsv2'), options2);
 </script>
