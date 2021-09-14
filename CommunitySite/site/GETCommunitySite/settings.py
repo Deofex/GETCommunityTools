@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import os
 from pathlib import Path
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,12 +21,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-i6axm_b^0bg7s4_@y5smh-o+gftxh&e!&1zu&*e&@=4eu@mhmm'
+SECRET_KEY = os.environ.get('djangosecretkey', 'bsd9dyv&tvn$u1!d2h7keu_tkv*w4nj&mco!h6(qfm9vdw8(s3')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+ProdDev = SECRET_KEY = os.environ.get('ProdDev', 'Dev')
+if ProdDev == 'Dev':
+    DEBUG = True
+else:
+    DEBUG = False
 
-ALLOWED_HOSTS = ['get.powerplatz.local']
+ALLOWED_HOSTS = ['get.powerplatz.local','get.powerplatz.nl']
 
 
 # Application definition
@@ -78,9 +83,9 @@ WSGI_APPLICATION = 'GETCommunitySite.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'nftdb',
-        'USER': 'nftdbuser',
-        'PASSWORD': 'DGFdsfv72qedd1rfq21eQWEq2',
+        'NAME': os.environ.get('POSTGRES_DB'),
+        'USER': os.environ.get('POSTGRES_USER'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
         'HOST': 'db',
         'PORT': '5432',
     }
@@ -130,3 +135,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+#if DEBUG == False:
+#    SECURE_SSL_REDIRECT= True
+#    SESSION_COOKIE_SECURE= True
+#    CSRF_COOKIE_SECURE= True
