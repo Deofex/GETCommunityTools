@@ -1,6 +1,7 @@
 import sys
 import os
 import logging
+import re
 from datetime import datetime, time, timedelta
 from db.db import Database
 from telegram.telegram import TelegramBot
@@ -34,14 +35,40 @@ db = Database(dbpassword)
 tg = TelegramBot(telegramapitoken,db)
 
 
+def filtersummery(summery):
+    # Your ticket provider guid in regex format + counter
+    ytpguidregex = '^([0-z]){8}(-([0-z]){4}){3}-([0-z]){12}$'
+    filtersummery = {}
+
+    for e in summery:
+        if e[0] == None:
+            n = 'Unregistered/Private events'
+        if re.match(ytpguidregex, e[0]) and e[2] == 'YourTicketProvider':
+            n = 'YourTicketProvider events (nameless)'
+        else:
+            n = e[0]
+        # If event exist, update the amount, else create a new entry
+        if n in filtersummery.keys():
+            filtersummery[n] = filtersummery[n] + e[1]
+        else:
+            filtersummery[n] = e[1]
+
+        # sort events
+        sortedfilteredsum = dict(sorted(
+            filtersummery.items(), key=lambda item: item[1], reverse=True))
+    return sortedfilteredsum
+
+
+
 def createrapport(reportdate, psalesummery, ssalesummery, tscanned):
     report = "<b>NFT report: {}-{}-{}</b>\n\n".format(
         reportdate.day, reportdate.month, reportdate.year)
     if len(psalesummery) > 0:
+        filteredpsalesummery = filtersummery(psalesummery)
         i = 0
         t = 0
         report += "<b>Tickets sold on the primary market:</b>\n"
-        for e in psalesummery:
+        for e in filteredpsalesummery.items():
             if e[0] == None:
                 n = 'Unregistered/Private events'
             else:
@@ -52,10 +79,11 @@ def createrapport(reportdate, psalesummery, ssalesummery, tscanned):
                 i, n, e[1]))
         report += '<b>Total Amount: {}</b>\n\n'.format(t)
     if len(ssalesummery) > 0:
+        filteredssalesummery = filtersummery(ssalesummery)
         i = 0
         t = 0
         report += "<b>Tickets sold on the secondary market:</b>\n"
-        for e in ssalesummery:
+        for e in filteredssalesummery.items():
             if e[0] == None:
                 n = 'Unregistered/Private events'
             else:
@@ -66,10 +94,11 @@ def createrapport(reportdate, psalesummery, ssalesummery, tscanned):
                 i, n, e[1]))
         report += '<b>Total Amount: {}</b>\n\n'.format(t)
     if len(tscanned) > 0:
+        filteredtscanned = filtersummery(tscanned)
         i = 0
         t = 0
         report += "<b>Tickets scanned:</b>\n"
-        for e in tscanned:
+        for e in filteredtscanned.items():
             if e[0] == None:
                 n = 'Unregistered/Private events'
             else:
