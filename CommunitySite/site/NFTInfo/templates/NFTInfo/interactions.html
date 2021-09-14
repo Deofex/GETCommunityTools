@@ -1,0 +1,21 @@
+{% extends 'shared/base.html' %}
+{% load static %}
+{% block content %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<div class="row">
+    <div class="col">
+        <div class="h-100 p-5 border rounded-3">
+            <h1 class="display-7">Interactions</h1>
+            <p class="lead">The proof that GET is alive and kicking</p>
+            <p>
+                All <b class=getcolor>GET Protocol</b> tickets are registered as NFT on the blockchain. Systems/users/ticket companies are interacting with the tickets. The tickets are created, sold to an end user, maybe it’s resold to someone else, it’s scanned at the event, it’s claimed by the user as trophy etc. Each of those actions are called interactions. Each interaction is registered and is made public. This page is displaying the number of interactions which are registered. It shows the usage of <b class=getcolor>GET</b> and can help you to make a rough estimation how much <b class=getcolor>GET</b> will be bought back from the market.</p>
+            <div class="card-body fixmidsize">
+                {{ last30daysscperiodnames|json_script:"last30daysscperiodnames"}}
+                {{ last30daysscvalues|json_script:"last30daysscvalues"}}
+                <canvas id="chart_last30daysinteractions"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="{% static 'js/graphs/interactions.js' %}"></script>
+{% endblock %}

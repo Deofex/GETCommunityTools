@@ -1,0 +1,103 @@
+{% extends 'shared/base.html' %}
+{% load static %}
+{% block content %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://d3js.org/d3.v4.js"></script>
+<div class="row">
+    <div class="col" style="height: 50vh;">
+        <div id="sourrounding_wordcloud_30dayseventsv2" style="height: 100%">
+            {{ eventswordcloudlist |json_script:"eventswordcloudlist"}}
+            <canvas id="wordcloud_30dayseventsv2" , class=canvas>
+        </div>
+    </div>
+    <script src="{% static 'js/wordcloud/wordcloud.js' %}"></script>
+</div>
+<script>
+    function draweventwordcloud() {
+        var canvas = document.getElementById('wordcloud_30dayseventsv2');
+        var surrounding = document.getElementById("sourrounding_wordcloud_30dayseventsv2");
+        canvas.width = surrounding.offsetWidth;
+        canvas.height = surrounding.offsetHeight;
+        var gridsize = canvas.width / 30;
+
+        var myWords = JSON.parse(document.getElementById('eventswordcloudlist').textContent);
+        var options2 = {
+            list: myWords,
+            fontFamily: 'Times, serif',
+            weightFactor: 6,
+            color: '#01C696',
+            backgroundColor: 'black',
+            drawOutOfBound: false,
+            shrinkToFit: true,
+            minSize: 5,
+            gridsize: gridsize,
+        };
+        WordCloud(document.getElementById('wordcloud_30dayseventsv2'), options2);
+    };
+    draweventwordcloud();
+    window.addEventListener("resize", draweventwordcloud);
+</script>
+<div class="row">
+    <div class="col">
+        <div class="jumbolookalike">
+            <h1 class="display-7">Events</h1>
+            <p class="lead">The places where GET flows</p>
+            <p>
+                Tickets are used at a lot of different kind of events. Think about your regular life and the events where tickets are used: Plane flights, cabaret shows, festivals, parking garages, public transport, museums. This page is displaying the different events for which <b class=getcolor>GET</b> is used and the number of tickets which are sold for each of these events. This will give you an idea of the adoption of the <b class=getcolor>GET Protocol</b>. </p>
+            <div class="card-body fixmidsize">
+                {{ last30daysperiodnames|json_script:"last30daysperiodnames"}}
+                {{ last30daysvalues|json_script:"last30daysvalues"}}
+                <canvas id="chart_last30daysevents"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <h1 class=center>Events finding place in the upcoming 30 days</h1>
+        <!--Table for larger devices-->
+        <div class="d-none d-sm-block">
+            <table class="table table-hover border">
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Tickets sold</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Ticketeer</th>
+                    </tr>
+                <tbody>
+                    {% for event in events30days %}
+                    <tr>
+                        <th scope="row">{{ event.eventname }}</th>
+                        <td>{{ event.nfts }}</td>
+                        <td>{{ event.date }}</td>
+                        <td>{{ event.ticketeer }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                </thead>
+            </table>
+        </div>
+        <!--Table for small devices-->
+        <div class="d-sm-none">
+            <table class="table table-hover border">
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Tickets sold</th>
+                    </tr>
+                <tbody>
+                    {% for event in events30days %}
+                    <tr>
+                        <th scope="row">{{ event.eventname }}</th>
+                        <td>{{ event.nfts }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+<script src="{% static 'js/graphs/events.js' %}"></script>
+{% endblock %}

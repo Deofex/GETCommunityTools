@@ -19,7 +19,11 @@ dbpassword = os.environ.get('POSTGRES_PASSWORD')
 w3url = os.environ.get('w3url')
 telegramapitoken = os.environ.get('telegramapitoken')
 # TODO: The ABI url below is from a proxy contract, how can this automatically be discovered?
-nftcontractabiurl = 'https://api.polygonscan.com/api?module=contract&action=getabi&address=0x0230078d740b2432d7b29e4a947711cb7dd35159&format=raw'
+nftcontractabiurl = ('https://api.polygonscan.com/api?module=contract'
+'&action=getabi'
+'&address=0x0230078d740b2432d7b29e4a947711cb7dd35159'
+'&format=raw'
+'&apikey={}'.format(polygonscanapikey))
 
 
 # Configure the logger

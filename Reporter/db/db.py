@@ -30,12 +30,12 @@ class Database():
     def get_psalesummery(self, starttime, endtime):
         '''Getting the primary sales summery from the database'''
         logger.info('Gather primary sale summery')
-        sqlstatement = '''SELECT eventname, count(nftindex) as nfts
+        sqlstatement = '''SELECT eventname, count(nftindex) as nfts, ticketeer
             FROM psale
-            INNER JOIN events
+            LEFT JOIN events
             ON events.eventaddress = psale.eventaddress
-            WHERE psale.timestamp > (%s) AND psale.timestamp < (%s)
-            GROUP BY eventname
+            WHERE psale.timestamp BETWEEN (%s) AND (%s)
+            GROUP BY eventname, ticketeer
             ORDER BY nfts DESC
             '''
         parameters = (starttime, endtime)
@@ -47,12 +47,12 @@ class Database():
     def get_ssalesummery(self, starttime, endtime):
         '''Getting the secondary sales summery from the database'''
         logger.info('Gather secondary sale summery')
-        sqlstatement = '''SELECT eventname, count(nftindex) as nfts
+        sqlstatement = '''SELECT eventname, count(nftindex) as nfts, ticketeer
             FROM ssale
-            INNER JOIN events
+            LEFT JOIN events
             ON events.eventaddress = ssale.eventaddress
-            WHERE ssale.timestamp > (%s) AND ssale.timestamp < (%s)
-            GROUP BY eventname
+            WHERE ssale.timestamp BETWEEN (%s) AND (%s)
+            GROUP BY eventname, ticketeer
             ORDER BY nfts DESC
             '''
         parameters = (starttime, endtime)
@@ -64,14 +64,15 @@ class Database():
     def get_tscannedsummery(self, starttime, endtime):
         '''Getting the scanned tickets summery from the database'''
         logger.info('Gather tickets scanned summery')
-        sqlstatement = '''SELECT eventname, count(tscanned.nftindex) as nfts
+        sqlstatement = '''
+                SELECT eventname, count(tscanned.nftindex) as nfts, ticketeer
                 FROM tscanned
                 INNER JOIN psale
                 ON tscanned.nftindex = psale.nftindex
-                INNER JOIN events
+                LEFT JOIN events
                 ON psale.eventaddress = events.eventaddress
-                WHERE tscanned.timestamp > (%s) AND tscanned.timestamp < (%s)
-                GROUP BY eventname
+                WHERE tscanned.timestamp BETWEEN (%s) AND (%s)
+                GROUP BY eventname, ticketeer
                 ORDER BY nfts DESC
             '''
         parameters = (starttime, endtime)

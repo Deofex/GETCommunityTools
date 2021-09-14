@@ -60,13 +60,20 @@ def get_logsapi(contract, polygonscanapikey, fromblock=0, toblock='latest'):
 
 def get_highestblock(batch):
     fromblock = 0
+    i= 0
     for r in batch:
         blockhexstr = r['blockNumber']
         blockint = int(blockhexstr, 16)
         if blockint > fromblock:
             lastblockhexstr = blockhexstr
             fromblock = blockint
-    return lastblockhexstr, blockint
+            logger.debug("{}) Fromblock {}  ------ {} higher".format(i,blockhexstr,blockint))
+        elif blockint == fromblock:
+            logger.debug("{}) Fromblock {}  ------ {} equal".format(i,blockhexstr,blockint))
+        else:
+            logger.debug("{}) Fromblock {}  ------ {} lower".format(i,blockhexstr,blockint))
+        i = i + 1
+    return lastblockhexstr, fromblock
 
 
 class BlockchainLogImporter():
@@ -89,7 +96,7 @@ class BlockchainLogImporter():
             # batch
             if len(data['result']) == 1000:
                 logger.info(
-                    'More than 1000 blocks recieved, more runs required')
+                    'More than 1000 logs recieved, more runs required')
                 # Results are unsorted, get the highest block
                 lastblockhexstr, fromblock = get_highestblock(data['result'])
                 # Remove lastblock, to avoid duplicated data
