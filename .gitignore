@@ -6,3 +6,5 @@ __pycache__
 **nft.db
 \DBBackups
 docker-compose-dev.yml
+fullchain.pem
+privkey.pem
