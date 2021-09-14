@@ -5,44 +5,52 @@ services:
         image: deofex/getnftbot:eventsimporter
         env_file:
             - prod.env
-        depends_on:
-            - "db"
     NFTImporter:
         image: deofex/getnftbot:nftimporter
         env_file:
             - prod.env
-        depends_on:
-            - "db"
     TelegramInput:
         image: deofex/getnftbot:telegraminput
         env_file:
             - prod.env
-        depends_on:
-            - "db"
     Reporter:
         image: deofex/getnftbot:reporter
         env_file:
             - prod.env
-        depends_on:
-            - "db"
     UpcomingEvents:
         image: deofex/getnftbot:upcomingevents
         env_file:
             - prod.env
-        depends_on:
-            - "db"
     PriceImporter:
         image: deofex/getnftbot:priceimporter
         env_file:
             - prod.env
-        depends_on:
-            - "db"
     db:
         image: postgres
         volumes:
             - getnftbot_v2:/var/lib/postgresql/data
         env_file:
             - prod.env
+    CommunitySite:
+        image: deofex/getnftbot:communitysite
+        env_file:
+            - prod.env
+        expose:
+            - 8000
+        volumes:
+            - getnftbot_static:/site/static
+    CommunitySiteProxy:
+        image: nginx
+        ports:
+            - "80:80"
+            - "443:443"
+        volumes:
+            - getnftbot_static:/var/www/html/static
+            - ./CommunitySiteProxy/keys:/etc/letsencrypt/live/get.powerplatz.nl
+            - ./CommunitySiteProxy/letsencryptetc:/etc/letsencrypt
+            - ./CommunitySiteProxy/letsencryptvar:/var/lib/letsencrypt
+            - ./CommunitySiteProxy/conf/nginx.conf:/etc/nginx/conf.d/nginx.conf
 volumes:
     getnftbot_v2:
         external: true
+    getnftbot_static:
