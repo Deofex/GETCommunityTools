@@ -43,7 +43,7 @@ def filtersummery(summery):
     for e in summery:
         if e[0] == None:
             n = 'Unregistered/Private events'
-        if re.match(ytpguidregex, e[0]) and e[2] == 'YourTicketProvider':
+        elif re.match(ytpguidregex, e[0]) and e[2] == 'YourTicketProvider':
             n = 'YourTicketProvider events (nameless)'
         else:
             n = e[0]
