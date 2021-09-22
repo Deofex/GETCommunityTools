@@ -64,8 +64,8 @@ class Database():
                                     latitude TEXT NOT NULL,
                                     currency TEXT NOT NULL,
                                     ticketeer TEXT NOT NULL,
-                                    starttime INTEGER NOT NULL,
-                                    endtime INTEGER NOT NULL,
+                                    starttime BIGINT NOT NULL,
+                                    endtime BIGINT NOT NULL,
                                     privateevent INTEGER NOT NULL,
                                     PRIMARY KEY (eventaddress)
                                 ); """
