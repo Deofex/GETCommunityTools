@@ -48,6 +48,15 @@ class Database():
     def initialize_tables(self):
         '''Create the needed tables in the database'''
         logger.info("Create tables if they doesn't exist yet")
+        sql_c_nftminted_table = """ CREATE TABLE IF NOT EXISTS nftminted (
+                                    id SERIAL,
+                                    nftindex INTEGER NOT NULL,
+                                    blocknumber INTEGER NOT NULL,
+                                    timestamp INTEGER NOT NULL,
+                                    timestampday INTEGER NOT NULL,
+                                    destinationaddress TEXT NOT NULL,
+                                    PRIMARY KEY (id)
+                                ); """
         sql_c_psale_table = """ CREATE TABLE IF NOT EXISTS psale (
                                     id SERIAL,
                                     nftindex INTEGER NOT NULL,
@@ -99,6 +108,7 @@ class Database():
         self.e_sqlstatement(sql_c_ssale_table)
         self.e_sqlstatement(sql_c_tinvalidated_table)
         self.e_sqlstatement(sql_c_tscanned_table)
+        self.e_sqlstatement(sql_c_nftminted_table)
 
     def create_psale(self, nftindex, blocknumber, timestamp, timestampday,
                      getused, ordertime, destinationaddress, eventaddress,

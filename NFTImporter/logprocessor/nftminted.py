@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 
 # Initialize logger
 logger = logging.getLogger(__name__)
@@ -11,6 +12,12 @@ def wallettostring(wallet):
         ws = ws.replace("0x", "0x" + "0" * addzeros)
     return ws
 
+def get_timestampday(timestamp):
+    d = datetime.fromtimestamp(timestamp)
+    sd = datetime(d.year, d.month, d.day)
+    sdt = sd.timestamp()
+    return sdt
+
 
 def nftminted(log,db):
     # This function gives an error, because it's phased out from the database
@@ -22,6 +29,7 @@ def nftminted(log,db):
         'nftindex':int(log['topics'][1], 16),
         'blocknumber':int(log['blockNumber'], 16),
         'timestamp':int(log['timeStamp'], 16),
+        'timestampday':get_timestampday(int(log['timeStamp'], 16)),
         'destinationaddress':wallettostring(log['topics'][2])
         }
 
