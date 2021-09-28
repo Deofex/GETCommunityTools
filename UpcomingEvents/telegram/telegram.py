@@ -2,6 +2,7 @@ import time
 import logging
 import json
 import requests
+from urllib.parse import quote
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -37,7 +38,7 @@ class TelegramBot():
             turl = turl + "?"
             for parameter in parameters.keys():
                 turl = turl + parameter + "="
-                turl = turl + str(parameters[parameter]) + "&"
+                turl = turl + quote(str(parameters[parameter])) + "&"
 
         # Remove last &
         turl = turl[:-1]
