@@ -30,8 +30,7 @@ if ProdDev == 'Dev':
 else:
     DEBUG = False
 
-ALLOWED_HOSTS = ['get.powerplatz.local','get.powerplatz.nl']
-
+ALLOWED_HOSTS = ['get.powerplatz.local','get.powerplatz.nl','getcommunityinsights.com']
 
 # Application definition
 
