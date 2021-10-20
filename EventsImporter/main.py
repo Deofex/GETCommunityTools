@@ -21,7 +21,7 @@ telegramapitoken = os.environ.get('telegramapitoken')
 # TODO: The ABI url below is from a proxy contract, how can this automatically be discovered?
 nftcontractabiurl = ('https://api.polygonscan.com/api?module=contract'
 '&action=getabi'
-'&address=0x0230078d740b2432d7b29e4a947711cb7dd35159'
+'&address=0xecbbac6e1f98693cf33c60994e61239dee3beeb6'
 '&format=raw'
 '&apikey={}'.format(polygonscanapikey))
 
@@ -64,7 +64,7 @@ def startrun():
 
     for log in logs:
         function = abifunctions[log['topics'][0]]
-        if function == 'newEventRegistered':
+        if function.lower() == 'neweventregistered':
             eventdata = get_w3eventdata(w3eventcontract, log['topics'][1])
             logprocessor.neweventregistered(log, eventdata, db, tg)
         else:
