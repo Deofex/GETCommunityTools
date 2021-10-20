@@ -9,6 +9,10 @@ services:
         image: deofex/getnftbot:nftimporter
         env_file:
             - prod.env
+    NFTImporter20211019:
+        image: deofex/getnftbot:nftimporter20211019
+        env_file:
+            - prod.env
     TelegramInput:
         image: deofex/getnftbot:telegraminput
         env_file:
