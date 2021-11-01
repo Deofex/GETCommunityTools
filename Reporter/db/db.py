@@ -33,7 +33,7 @@ class Database():
         sqlstatement = '''SELECT eventname, count(nftindex) as nfts, ticketeer
             FROM psale
             LEFT JOIN events
-            ON events.eventaddress = psale.eventaddress
+            ON UPPER(events.eventaddress) = UPPER(psale.eventaddress)
             WHERE psale.timestamp BETWEEN (%s) AND (%s)
             GROUP BY eventname, ticketeer
             ORDER BY nfts DESC
@@ -50,7 +50,7 @@ class Database():
         sqlstatement = '''SELECT eventname, count(nftindex) as nfts, ticketeer
             FROM ssale
             LEFT JOIN events
-            ON events.eventaddress = ssale.eventaddress
+            ON UPPER(events.eventaddress) = UPPER(ssale.eventaddress)
             WHERE ssale.timestamp BETWEEN (%s) AND (%s)
             GROUP BY eventname, ticketeer
             ORDER BY nfts DESC
@@ -70,7 +70,7 @@ class Database():
                 INNER JOIN psale
                 ON tscanned.nftindex = psale.nftindex
                 LEFT JOIN events
-                ON psale.eventaddress = events.eventaddress
+                ON UPPER(psale.eventaddress) = UPPER(events.eventaddress)
                 WHERE tscanned.timestamp BETWEEN (%s) AND (%s)
                 GROUP BY eventname, ticketeer
                 ORDER BY nfts DESC
