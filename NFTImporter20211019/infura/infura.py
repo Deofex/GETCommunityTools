@@ -48,8 +48,8 @@ class Infura():
             except Exception as e:
                 if e.args[0]['code'] == -32005:
                     logger.warning(
-                        'To much blocks requested, use only 10000 blocks next')
-                    toBlock = fromBlock + 10000
+                        'To much blocks requested, use only 2500 blocks next')
+                    toBlock = fromBlock + 2500
                 elif e.args[0]['code'] == -32603:
                     logger.warning(
                         'Request failed or timed out, query only 50 percent')
