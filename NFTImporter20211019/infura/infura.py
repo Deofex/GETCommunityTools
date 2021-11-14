@@ -51,11 +51,14 @@ class Infura():
                         'To much blocks requested, use only 2500 blocks next')
                     toBlock = fromBlock + 2500
                 elif e.args[0]['code'] == -32603:
-                    logger.warning(
-                        'Request failed or timed out, query only 50 percent')
                     if toBlock == 'latest':
+                        logger.warning(
+                            'Request failed or timed out, use only 2500 next')
                         toBlock = fromBlock + 2500
                     elif (toBlock - fromBlock) > 5000:
+                        logger.warning(
+                            'Request failed or timed out, query only 50 percent'
+                            )
                         toBlock = 2500
                     else:
                         toBlock = int(toBlock - ((toBlock - fromBlock) / 2))
