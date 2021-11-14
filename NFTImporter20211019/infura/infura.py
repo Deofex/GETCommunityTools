@@ -23,15 +23,30 @@ class Infura():
         self.nftcontract = self.w3.eth.contract(
             address=nftcontract, abi=nftabi)
 
-    def get_nftevents(self, fromBlock, toBlock='latest'):
-        logger.info('Retrieving NFT events. Fromblock: {} - ToBlock: {}'.format(
-            fromBlock, toBlock
-        ))
+    def get_w3eventlog(self, fromBlock, toBlock):
         events = self.w3.eth.get_logs({
             'fromBlock': fromBlock,
             'toBlock': toBlock,
             'address': self.nftcontractaddress
         })
+        return events
+
+    def get_nftevents(self, fromBlock):
+        toBlock = 'latest'
+        logger.info('Retrieving NFT events. Fromblock: {} - ToBlock: {}'.format(
+            fromBlock, toBlock
+        ))
+        try:
+            events = self.get_w3eventlog(fromBlock, toBlock)
+        except Exception as e:
+            if e.args[0]['code'] == -32005:
+                toBlock = fromBlock + 5000
+                events = self.get_w3eventlog(fromBlock, toBlock)
+            else:
+                logger.error(
+                    'Error occured getting w3 events. Error: {}: {}'.format(
+                    e.args[0]['code'], e.args[0]['message']
+                ))
         return events
 
     def get_nfttransaction(self, txhash):
