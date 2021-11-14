@@ -40,22 +40,31 @@ infura = Infura(w3url, nftcontract, nftabi)
 
 
 def startrun():
-    fromblock = db.get_lastblock() + 1
-    events = infura.get_nftevents(fromBlock=fromblock)
+    while True:
+        fromblock = db.get_lastblock() + 1
+        events, complete = infura.get_nftevents(fromBlock=fromblock)
 
-    for event in events:
-        nfttransaction = infura.get_nfttransaction(event.transactionHash)
-        if nfttransaction['intputobj'].fn_name == 'primarySale':
-            logprocessor.primarysalemint(event, nfttransaction, infura, db)
-        elif nfttransaction['intputobj'].fn_name == 'secondaryTransfer':
-            logprocessor.secondarysale(event, nfttransaction, infura, db)
-        elif nfttransaction['intputobj'].fn_name == 'invalidateAddressNFT':
-            logprocessor.ticketinvalidated(event, nfttransaction, infura, db)
-        elif nfttransaction['intputobj'].fn_name == 'scanNFT':
-            logprocessor.ticketscanned(event, nfttransaction, infura, db)
+        for event in events:
+            nfttransaction = infura.get_nfttransaction(event.transactionHash)
+            if nfttransaction['intputobj'].fn_name == 'primarySale':
+                logprocessor.primarysalemint(event, nfttransaction, infura, db)
+            elif nfttransaction['intputobj'].fn_name == 'secondaryTransfer':
+                logprocessor.secondarysale(event, nfttransaction, infura, db)
+            elif nfttransaction['intputobj'].fn_name == 'invalidateAddressNFT':
+                logprocessor.ticketinvalidated(
+                    event, nfttransaction, infura, db)
+            elif nfttransaction['intputobj'].fn_name == 'scanNFT':
+                logprocessor.ticketscanned(event, nfttransaction, infura, db)
+            else:
+                logger.warning(
+                    'New kind of unproccessed log type found: {}'.format(
+                    nfttransaction['intputobj'].fn_name))
+
+        if complete == True:
+            logger.info('All events are imported')
+            return
         else:
-            logger.warning('New kind of unproccessed log type found: {}'.format(
-                nfttransaction['intputobj'].fn_name))
+            logger.info('Not all events are imported, starting new run')
 
 
 while True:

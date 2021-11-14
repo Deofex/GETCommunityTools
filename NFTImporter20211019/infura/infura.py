@@ -40,7 +40,11 @@ class Infura():
             ))
             try:
                 events = self.get_w3eventlog(fromBlock, toBlock)
-                return events
+                if toBlock == 'latest':
+                    complete = True
+                else:
+                    complete = False
+                return events, complete
             except Exception as e:
                 if e.args[0]['code'] == -32005:
                     logger.warning(
