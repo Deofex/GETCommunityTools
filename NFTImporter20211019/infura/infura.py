@@ -33,21 +33,30 @@ class Infura():
 
     def get_nftevents(self, fromBlock):
         toBlock = 'latest'
-        logger.info('Retrieving NFT events. Fromblock: {} - ToBlock: {}'.format(
-            fromBlock, toBlock
-        ))
-        try:
-            events = self.get_w3eventlog(fromBlock, toBlock)
-        except Exception as e:
-            if e.args[0]['code'] == -32005:
-                toBlock = fromBlock + 5000
+        while True:
+            logger.info(
+                'Retrieving NFT events. Fromblock: {} - ToBlock: {}'.format(
+                fromBlock, toBlock
+            ))
+            try:
                 events = self.get_w3eventlog(fromBlock, toBlock)
-            else:
-                logger.error(
-                    'Error occured getting w3 events. Error: {}: {}'.format(
-                    e.args[0]['code'], e.args[0]['message']
-                ))
-        return events
+                return events
+            except Exception as e:
+                if e.args[0]['code'] == -32005:
+                    logger.warning(
+                        'To much blocks requested, use only 10000 blocks next')
+                    toBlock = fromBlock + 10000
+                elif e.args[0]['code'] == -32603:
+                    logger.warning(
+                        'Request failed or timed out, query only 50 percent')
+                    toBlock = int(toBlock + ((toBlock - fromBlock) / 2))
+                else:
+                    logger.error(
+                        'Error occured getting w3 events. Error: {}: {}'.format(
+                        e.args[0]['code'], e.args[0]['message']
+                    ))
+                    raise Exception('Unknown error occured')
+
 
     def get_nfttransaction(self, txhash):
         logger.info('Get Infura transaction with tx hash: {}'.format(
