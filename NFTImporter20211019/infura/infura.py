@@ -53,7 +53,9 @@ class Infura():
                 elif e.args[0]['code'] == -32603:
                     logger.warning(
                         'Request failed or timed out, query only 50 percent')
-                    if (toBlock - fromBlock) > 5000:
+                    if toBlock == 'latest':
+                        toBlock = fromBlock + 2500
+                    elif (toBlock - fromBlock) > 5000:
                         toBlock = 2500
                     else:
                         toBlock = int(toBlock - ((toBlock - fromBlock) / 2))
