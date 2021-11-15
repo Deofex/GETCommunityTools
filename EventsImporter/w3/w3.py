@@ -1,5 +1,6 @@
 import logging
 import requests
+import time
 from web3 import Web3
 
 # Initialize logger
@@ -42,6 +43,23 @@ def get_w3eventdata(eventscontract,eventaddress):
     logger.info('Get w3 event data for event: {}'.format('eventaddress'))
     eventaddresschecksum = Web3.toChecksumAddress(
         wallettostring(eventaddress))
-    e = eventscontract.functions.getEventData(eventaddresschecksum).call()
-    return e
-
+    retry = 0
+    while True:
+        try:
+            e = eventscontract.functions.getEventData(
+                eventaddresschecksum).call()
+            return e
+        except Exception as e:
+            if e.args[0]['code'] == -32603:
+                if retry < 5:
+                    logger.warning('A timeout has occured, retry in 10 seconds')
+                    time.sleep(10)
+                    retry += 1
+                else:
+                    logger.error('5 timeouts in a row, cannot continue')
+            else:
+                logger.error(
+                    'Error occured getting w3 events. Error: {}: {}'.format(
+                        e.args[0]['code'], e.args[0]['message']
+                    ))
+                raise Exception('Unknown error occured')
