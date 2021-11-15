@@ -40,9 +40,9 @@ infura = Infura(w3url, nftcontract, nftabi)
 
 
 def startrun():
+    fromblock = db.get_lastblock() + 1
     while True:
-        fromblock = db.get_lastblock() + 1
-        events, complete = infura.get_nftevents(fromBlock=fromblock)
+        events, lastblock = infura.get_nftevents(fromBlock=fromblock)
 
         for event in events:
             nfttransaction = infura.get_nfttransaction(event.transactionHash)
@@ -60,11 +60,12 @@ def startrun():
                     'New kind of unproccessed log type found: {}'.format(
                     nfttransaction['intputobj'].fn_name))
 
-        if complete == True:
+        if lastblock == 'latest':
             logger.info('All events are imported')
             return
         else:
             logger.info('Not all events are imported, starting new run')
+            fromblock = lastblock
 
 
 while True:
