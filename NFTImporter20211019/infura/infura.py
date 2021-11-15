@@ -33,6 +33,7 @@ class Infura():
 
     def get_nftevents(self, fromBlock):
         toBlock = 'latest'
+        maxblocks = 600
         while True:
             logger.info(
                 'Retrieving NFT events. Fromblock: {} - ToBlock: {}'.format(
@@ -45,17 +46,17 @@ class Infura():
                 if e.args[0]['code'] == -32005:
                     logger.warning(
                         'To much blocks requested, use only 2500 blocks next')
-                    toBlock = fromBlock + 2500
+                    toBlock = fromBlock + maxblocks
                 elif e.args[0]['code'] == -32603:
                     if toBlock == 'latest':
                         logger.warning(
                             'Request failed or timed out, use only 2500 next')
-                        toBlock = fromBlock + 2500
-                    elif (toBlock - fromBlock) > 5000:
+                        toBlock = fromBlock + maxblocks
+                    elif (toBlock - fromBlock) > maxblocks:
                         logger.warning(
                             'Request failed or timed out, query only 50 percent'
                             )
-                        toBlock = 2500
+                        toBlock = maxblocks
                     else:
                         toBlock = int(toBlock - ((toBlock - fromBlock) / 2))
                 else:
